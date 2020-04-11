@@ -111,4 +111,33 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  callback-url: http://localhost:9088/api/public/logger
+  mcc: "234"
+  
+smpp-connector:
+  conn:
+    - type: transceiver
+      name: smsc-conn
+      system-id: test
+      password: test
+      interface-version: 0x34
+      system-type: VMA
+      host: 192.168.1.161
+      port: 2776
+      window-size: 50
+#  # Default PDU for SMPP Session
+#  pdu:
+#    source-address:
+#      ton: "01"
+#      npi: "01"
+#      address: 9335 # This value will be override during DeliverSm
+#    dest-address:
+#      ton: "01"
+#      npi: "01"
+#      address: 9335 # This value will be override during SubmitSM
+#    registered-delivery: 0 # 0x01 for Delivery Register
+#    service-type:  # Default empty. Can be USSD or some other string to annotate the service
+#    protocol-id: 0 # 0 - Auto, 0x33 = 3.3, 0x34 = 3.4, 0x50 = 5.0
+#    esm-class: 3   # ESM Class bit mask
+#    data-coding: 0 # Data coding, 0 = GSM7, 4 = UTF, 8 = UCS2

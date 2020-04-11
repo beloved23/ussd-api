@@ -3,6 +3,8 @@ package com.ft.service;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.config.ApplicationProperties;
 import com.ft.config.Constants;
 import com.ft.domain.Notification;
@@ -43,27 +49,58 @@ public class EventService {
     @Autowired
     RestTemplate restTemplate;
     
+    @Autowired
+    ObjectMapper objectMapper;
+    
+    @PostConstruct
+    public void testEndpoint() {
+    	try {
+    		ResponseEntity<String> response = restTemplate.getForEntity(props.getCallbackUrl(), String.class);
+    		log.info("API Endpoint Response: {} | {}", response.getStatusCodeValue(), response.getBody());
+    	} catch (Exception e) {
+    		log.error("Endpoint not ready yet: {}", e);
+    	}
+    }
+    
     @Async
     public void messageReceivedWithLog(
-            String channel,
-            String from,
-            String to,
-            String text,
+            String smscId,
+            EventDTO mo,
             Map<String, String> params
-        ) {
-    	EventDTO event = new EventDTO()
-        		.from(from)
-        		.to(to)
-        		.text(text)
-        		.requestAt(ZonedDateTime.now())
-        		;
+        ) throws JsonMappingException, JsonProcessingException {
+    	EventDTO responseEvent = objectMapper.readValue(objectMapper.writeValueAsString(mo), EventDTO.class);
+    	responseEvent.setSource(mo.getDest()); responseEvent.setSourceTon(mo.getDestTon()); responseEvent.setSourceNpi(mo.getDestNpi());
+    	responseEvent.setDest(mo.getSource()); responseEvent.setDestTon(mo.getSourceTon()); responseEvent.setDestNpi(mo.getSourceNpi());
+    	responseEvent.setSessionId(smscId);
+    	responseEvent.setUssdOp(props.getMoEnd()); // default information
+    	params.put("msisdn", mo.getSource());
+    	params.put("code", mo.getDest());
+    	params.put("INPUT", mo.getText());
+    	params.putAll(props.getQueryParams());
     	try {
-	    	ResponseEntity<String> response = onMessageReceived(channel, from, to, text);
-	    	event.channel(channel).setText(response.getBody());
+    		ResponseEntity<String> response = restTemplate.getForEntity(props.getCallbackUrl(), String.class, params);
+	    	responseEvent.setText(response.getBody());
+	    	if (response.getStatusCodeValue() == 200) {
+	    		responseEvent.setUssdOp(props.getMoContinue()); // CONTINUE
+	    		responseEvent.setError(false);
+	    		responseEvent.setSessionActive(true);
+	    	} else {
+	    		responseEvent.setUssdOp(props.getMoEnd()); // END
+	    		responseEvent.setSessionActive(false);
+	    	}
+    	} catch (HttpStatusCodeException e) {
+    		log.error("Error from http client: {} | {}", e.getStatusCode(), e.getResponseBodyAsString());
+    		if (e.getStatusCode().is4xxClientError()) {
+    			responseEvent.setUssdOp(props.getMoEnd());
+    		} else {
+    			responseEvent.setUssdOp(props.getMoErr());
+    		}
+    		responseEvent.setError(true);
     	} catch (Exception e) {
-    		event.channel(channel).setText("Xin loi, hien tai he thong dang ban. Xin quy khach vui long thu lai sau.");
+    		responseEvent.setError(true);
+    		responseEvent.setText(props.getErrorText());
     	}
-    	eventQueue.offer(event.channel(Constants.CHANNEL_SMS));
+    	eventQueue.offer(responseEvent);
     	
     }
 

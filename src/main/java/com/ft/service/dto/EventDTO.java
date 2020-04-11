@@ -14,23 +14,37 @@ public class EventDTO implements Serializable {
 
 	private ZonedDateTime responseAt;
 
-	private String from;
+	private String source;
+	
+	private byte sourceTon;
+	
+	private byte sourceNpi;
 
-	private String to;
+	private String dest;
+	
+	private byte destTon;
+	
+	private byte destNpi;
 
 	private String text;
 	
 	private String channel;
 	
-	private int ussdOp;
+	private String ussdOp;
 	
 	private String sessionId;
+	
+	private Integer sessionNumber;
+	
+	private Integer sequenceNumber;
+	
+	private Boolean sessionActive;
 	
 	private boolean error = false;
 
 	@Override
 	public String toString() {
-		return "EventDTO [requestAt=" + requestAt + ", responseAt=" + responseAt + ", from=" + from + ", to=" + to
+		return "EventDTO [requestAt=" + requestAt + ", responseAt=" + responseAt + ", from=" + source + ", to=" + dest
 				+ ", text=" + text + "]";
 	}
 
@@ -50,20 +64,52 @@ public class EventDTO implements Serializable {
 		this.responseAt = responseAt;
 	}
 
-	public String getFrom() {
-		return from;
+	public String getSource() {
+		return source;
 	}
 
-	public void setFrom(String from) {
-		this.from = from;
+	public void setSource(String source) {
+		this.source = source;
 	}
 
-	public String getTo() {
-		return to;
+	public byte getSourceTon() {
+		return sourceTon;
 	}
 
-	public void setTo(String to) {
-		this.to = to;
+	public void setSourceTon(byte sourceTon) {
+		this.sourceTon = sourceTon;
+	}
+
+	public byte getSourceNpi() {
+		return sourceNpi;
+	}
+
+	public void setSourceNpi(byte sourceNpi) {
+		this.sourceNpi = sourceNpi;
+	}
+
+	public String getDest() {
+		return dest;
+	}
+
+	public void setDest(String dest) {
+		this.dest = dest;
+	}
+
+	public byte getDestTon() {
+		return destTon;
+	}
+
+	public void setDestTon(byte destTon) {
+		this.destTon = destTon;
+	}
+
+	public byte getDestNpi() {
+		return destNpi;
+	}
+
+	public void setDestNpi(byte destNpi) {
+		this.destNpi = destNpi;
 	}
 
 	public String getText() {
@@ -74,31 +120,6 @@ public class EventDTO implements Serializable {
 		this.text = text;
 	}
 
-	public EventDTO text(String text) {
-		this.text = text;
-		return this;
-	}
-
-	public EventDTO requestAt(ZonedDateTime requestAt) {
-		this.requestAt = requestAt;
-		return this;
-	}
-
-	public EventDTO responseAt(ZonedDateTime responseAt) {
-		this.responseAt = responseAt;
-		return this;
-	}
-
-	public EventDTO from(String from) {
-		this.from = from;
-		return this;
-	}
-
-	public EventDTO to(String to) {
-		this.to = to;
-		return this;
-	}
-
 	public String getChannel() {
 		return channel;
 	}
@@ -106,17 +127,12 @@ public class EventDTO implements Serializable {
 	public void setChannel(String channel) {
 		this.channel = channel;
 	}
-	
-	public EventDTO channel(String channel) {
-		this.channel = channel;
-		return this;
-	}
 
-	public int getUssdOp() {
+	public String getUssdOp() {
 		return ussdOp;
 	}
 
-	public void setUssdOp(int ussdOp) {
+	public void setUssdOp(String ussdOp) {
 		this.ussdOp = ussdOp;
 	}
 
@@ -128,6 +144,30 @@ public class EventDTO implements Serializable {
 		this.sessionId = sessionId;
 	}
 
+	public Integer getSessionNumber() {
+		return sessionNumber;
+	}
+
+	public void setSessionNumber(Integer sessionNumber) {
+		this.sessionNumber = sessionNumber;
+	}
+
+	public Integer getSequenceNumber() {
+		return sequenceNumber;
+	}
+
+	public void setSequenceNumber(Integer sequenceNumber) {
+		this.sequenceNumber = sequenceNumber;
+	}
+
+	public Boolean getSessionActive() {
+		return sessionActive;
+	}
+
+	public void setSessionActive(Boolean sessionActive) {
+		this.sessionActive = sessionActive;
+	}
+
 	public boolean isError() {
 		return error;
 	}
@@ -135,6 +175,7 @@ public class EventDTO implements Serializable {
 	public void setError(boolean error) {
 		this.error = error;
 	}
-	
+
+
 	
 }

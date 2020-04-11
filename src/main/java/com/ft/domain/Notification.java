@@ -27,6 +27,8 @@ public class Notification implements Serializable {
     @NotNull
     @Size(max = 20)
     private String channel;
+    
+    private String clientId;
 
     @NotNull
     @Size(max = 40)
@@ -281,4 +283,30 @@ public class Notification implements Serializable {
         this.meta.put(key, value);
         return this;
     }
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getSyncPayload() {
+		return syncPayload;
+	}
+
+	public void setSyncPayload(String syncPayload) {
+		this.syncPayload = syncPayload;
+	}
+
+	public ZonedDateTime getSyncAt() {
+		return syncAt;
+	}
+
+	public void setSyncAt(ZonedDateTime syncAt) {
+		this.syncAt = syncAt;
+	}
+    
+    
 }

@@ -1,5 +1,8 @@
 package com.ft.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -14,12 +17,20 @@ public class ApplicationProperties {
 	/**
 	 * Callback URL for DeliverSM
 	 */
-	private String callbackUrl;
+	private String callbackUrl = "http://69.64.81.160:4444/AirtelUssd/MFill"; // ?msisdn=2348022221569&sessionid=15856853985735944&INPUT=5511&code=20035%27";
 	
+	private String errorText = "Gateway Timeout";
+	private Map<String, String> queryParams = new HashMap<>();
 	/**
      * Mobile Country Code
      */
     private String mcc = "84";
+    
+    private String moContinue = "17";
+    
+    private String moEnd = "32";
+    
+    private String moErr = "64";
     
     /**
      * Return the correct MSISDN format for the whole number
@@ -68,6 +79,48 @@ public class ApplicationProperties {
 	public void setMcc(String mcc) {
 		this.mcc = mcc;
 	}
-    
+
+	public Map<String, String> getQueryParams() {
+		return queryParams;
+	}
+
+	public void setQueryParams(Map<String, String> queryParams) {
+		this.queryParams = queryParams;
+	}
+
+	public String getErrorText() {
+		return errorText;
+	}
+
+	public void setErrorText(String errorText) {
+		this.errorText = errorText;
+	}
+
+	public String getMoContinue() {
+		return moContinue;
+	}
+
+	public void setMoContinue(String moContinue) {
+		this.moContinue = moContinue;
+	}
+
+	public String getMoEnd() {
+		return moEnd;
+	}
+
+	public void setMoEnd(String moEnd) {
+		this.moEnd = moEnd;
+	}
+
+	public String getMoErr() {
+		return moErr;
+	}
+
+	public void setMoErr(String moErr) {
+		this.moErr = moErr;
+	}
+
+
+	
     
 }

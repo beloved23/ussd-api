@@ -44,7 +44,7 @@ public class NotificationService {
 		
 		if (evt.getChannel().equalsIgnoreCase(Constants.CHANNEL_SMS)) {
 			try {
-				smscSmppConfiguration.sendAsyncMessage(evt.getTo(), evt.getText(), evt.getFrom());
+				smscSmppConfiguration.sendAsyncMessage(evt);
 			} catch (Exception e) {
 				log.error("Cannot send SMS back to client", e);
 			}

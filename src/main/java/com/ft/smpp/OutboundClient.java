@@ -24,6 +24,7 @@ import com.cloudhopper.smpp.type.SmppChannelConnectException;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
+import com.ft.config.SmscSmppConfiguration;
 
 public class OutboundClient extends Client {
 

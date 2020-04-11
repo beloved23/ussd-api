@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.util.HexUtil;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.pdu.BaseSm;
 /*
@@ -39,9 +40,12 @@ import com.cloudhopper.smpp.tlv.Tlv;
 import com.cloudhopper.smpp.tlv.TlvConvertException;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
 import com.cloudhopper.smpp.util.DeliveryReceiptException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ft.config.Constants;
 import com.ft.domain.Notification;
 import com.ft.service.EventService;
+import com.ft.service.dto.EventDTO;
 import com.ft.smpp.OutboundClient;
 import com.ft.smpp.SmppClientMessageService;
 
@@ -106,7 +110,7 @@ public class UssdClientMessagingService implements SmppClientMessageService {
 				updateDeliveryReport(dlr.getMessageId(), HttpStatus.ACCEPTED.value(), destAddress, sourceAddress);
 		} catch (DeliveryReceiptException e) {
 			log.debug("MO SMS: {} -> {} | {}", sourceAddress, destAddress, shortMsg);
-			processMobileOriginatedMessage(sourceAddress, destAddress, shortMsg, deliverSm);
+			processMobileOriginatedMessage(sourceAddress, destAddress, shortMsg, deliverSm, client.getSessionId());
 		}
 		PduResponse response = deliverSm.createResponse();
 		response.setResultMessage("OK");
@@ -122,7 +126,15 @@ public class UssdClientMessagingService implements SmppClientMessageService {
 	 * @param deliverSm
 	 */
 	public void processMobileOriginatedMessage(String sourceAddress, String destAddress, String shortMsg,
-			BaseSm deliverSm) {
+			BaseSm deliverSm, String smppClientId) {
+		
+		EventDTO evt = new EventDTO();
+		evt.setChannel(Constants.CHANNEL_SMS);
+		evt.setSource(sourceAddress); evt.setSourceTon(deliverSm.getSourceAddress().getTon()); evt.setSourceNpi(deliverSm.getSourceAddress().getNpi());
+		evt.setDest(destAddress); evt.setDestTon(deliverSm.getDestAddress().getTon()); evt.setDestNpi(deliverSm.getDestAddress().getNpi());
+		evt.setText(shortMsg);
+		
+		
 		Map<String, String> params = new HashMap<>();
 		Tlv ussdOp = deliverSm.getOptionalParameter(SmppConstants.TAG_USSD_SERVICE_OP);
 		if (ussdOp != null)
@@ -133,19 +145,38 @@ public class UssdClientMessagingService implements SmppClientMessageService {
 			Tlv sessionInfo = deliverSm.getOptionalParameter(SmppConstants.TAG_ITS_SESSION_INFO);
 			if (sessionInfo != null) {
 				byte[] sessionInfoData = sessionInfo.getValue();
-				params.put("its_session_info", sessionInfoData + "");
+				log.debug("Got session info, length {}", sessionInfo.getLength(), HexUtil.toHexString(sessionInfoData));
+				if (sessionInfo.getLength() == 2) {
+					int sessionNumber = sessionInfoData[0];
+					params.put("sessionNumber", sessionNumber + "");
+					int sequenceNumber = sessionInfoData[1] >> 1;
+					params.put("sequenceNumber", sequenceNumber + "");
+					boolean sessionIndicatorActive = (sessionInfoData[1] & 1) != 0;
+					params.put("sessionIndicatorActive", sessionIndicatorActive + "");
+					
+					// reserve for response
+					evt.setSessionNumber(sessionNumber);
+					evt.setSequenceNumber(sequenceNumber);
+					evt.setSessionActive(sessionIndicatorActive);
+				}
+				params.put("its_session_info", HexUtil.toHexString(sessionInfoData));
 			}
 
 			Tlv networkErrorCode = deliverSm.getOptionalParameter(SmppConstants.TAG_NETWORK_ERROR_CODE);
 			if (networkErrorCode != null) {
 				byte[] errorCode = networkErrorCode.getValue();
-				params.put("network_error_code", errorCode + "");
+				params.put("network_error_code", HexUtil.toHexString(errorCode));
 			}
 
 		} catch (TlvConvertException e) {
 			log.error("Cannot extract USSD service op", e);
 		}
-		eventHandler.messageReceivedWithLog(Constants.CHANNEL_SMS, sourceAddress, destAddress, shortMsg, params);
+		
+		try {
+			eventHandler.messageReceivedWithLog(smppClientId, evt, params);
+		} catch (JsonProcessingException e) {
+			log.error("Error processing data", e);
+		}
 	}
 
 	/**
