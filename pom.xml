@@ -285,6 +285,18 @@
             <artifactId>metrics-core</artifactId>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
+        <!-- SMPP CONNECTOR -->
+		<dependency>
+		    <groupId>org.restcomm.smpp</groupId>
+		    <artifactId>ch-smpp</artifactId>
+		    <version>5.1.0-113</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.restcomm.smpp</groupId>
+		    <artifactId>ch-commons-gsm</artifactId>
+		    <version>7.0.6</version>
+		</dependency>
+    <!-- / SMPP CONNECTOR -->
     </dependencies>
 
     <build>

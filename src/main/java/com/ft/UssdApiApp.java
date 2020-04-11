@@ -1,6 +1,8 @@
 package com.ft;
 
 import com.ft.config.ApplicationProperties;
+import com.ft.config.SmscSmppConfiguration;
+
 import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
 import java.net.InetAddress;
@@ -17,7 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ ApplicationProperties.class })
+@EnableConfigurationProperties({ ApplicationProperties.class, SmscSmppConfiguration.class })
 public class UssdApiApp {
     private static final Logger log = LoggerFactory.getLogger(UssdApiApp.class);
 
