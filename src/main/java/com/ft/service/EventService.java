@@ -75,6 +75,7 @@ public class EventService {
     	responseEvent.setUssdOp(props.getMoEnd()); // default information
     	params.put("msisdn", mo.getSource());
     	params.put("code", mo.getDest());
+    	params.put("sessionid", mo.getSessionNumber() + "");
     	params.put("INPUT", mo.getText());
     	params.putAll(props.getQueryParams());
     	try {
