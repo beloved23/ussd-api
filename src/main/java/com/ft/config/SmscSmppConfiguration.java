@@ -98,7 +98,7 @@ public class SmscSmppConfiguration {
 						request.addOptionalParameter(new Tlv(SmppConstants.TAG_USSD_SERVICE_OP, ussdOp));
 						
 						if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)) {
-							int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 1 : 0));
+							int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
 							byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
 							request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
 						}
@@ -120,7 +120,7 @@ public class SmscSmppConfiguration {
 					request.addOptionalParameter(new Tlv(SmppConstants.TAG_USSD_SERVICE_OP, ussdOp));
 					
 					if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)){
-						int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 1 : 0));
+						int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
 						byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
 						request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
 					}
