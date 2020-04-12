@@ -90,18 +90,18 @@ public class SmscSmppConfiguration {
 					request.setSourceAddress(new Address(event.getSourceTon(), event.getSourceNpi(), event.getSource()));
 					request.setDestAddress(new Address(event.getDestTon(), event.getDestNpi(), event.getDest()));
 					request.setEsmClass(SmppConstants.ESM_CLASS_UDHI_MASK);
-					request.setDataCoding(event.getDataCoding());
+//					request.setDataCoding(event.getDataCoding());
 					request.setShortMessage(s);
 					
 					if (event.getUssdOp() != null) {
 						byte[] ussdOp = HexUtil.toByteArray(event.getUssdOp());
 						request.addOptionalParameter(new Tlv(SmppConstants.TAG_USSD_SERVICE_OP, ussdOp));
 						
-						if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)) {
-							int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
-							byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
-							request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
-						}
+//						if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)) {
+//							int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
+//							byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
+//							request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
+//						}
 					}
 					session.sendRequestPdu(request, 60000, false);
 				}
@@ -110,7 +110,7 @@ public class SmscSmppConfiguration {
 				log.debug("Text message DOES NOT need to split");
 				SubmitSm request = new SubmitSm();
 				request.setServiceType("USSD");
-				request.setDataCoding(event.getDataCoding());
+//				request.setDataCoding(event.getDataCoding());
 				request.setSourceAddress(new Address(event.getSourceTon(), event.getSourceNpi(), event.getSource()));
 				request.setDestAddress(new Address(event.getDestTon(), event.getDestNpi(), event.getDest()));
 				request.setShortMessage(CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_ISO_8859_1));
@@ -119,11 +119,11 @@ public class SmscSmppConfiguration {
 					byte[] ussdOp = HexUtil.toByteArray(event.getUssdOp());
 					request.addOptionalParameter(new Tlv(SmppConstants.TAG_USSD_SERVICE_OP, ussdOp));
 					
-					if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)){
-						int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
-						byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
-						request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
-					}
+//					if ((event.getSessionActive() != null) && (event.getSessionNumber() != null) && (event.getSequenceNumber() != null)){
+//						int e = (( event.getSequenceNumber() << 1 ) | (event.getSessionActive() ? 0 : 1));
+//						byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
+//						request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
+//					}
 					
 				}
 				session.sendRequestPdu(request, 60000, false);
