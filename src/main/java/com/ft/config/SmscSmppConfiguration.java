@@ -102,9 +102,7 @@ public class SmscSmppConfiguration {
 							byte[] sessInfo = { event.getSessionNumber().byteValue(), (byte) e };
 							request.addOptionalParameter(new Tlv(SmppConstants.TAG_ITS_SESSION_INFO, sessInfo));
 						}
-						
 					}
-					
 					session.sendRequestPdu(request, 60000, false);
 				}
 				return;
