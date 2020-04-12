@@ -2,13 +2,11 @@ package com.ft.smpp.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +39,6 @@ import com.cloudhopper.smpp.tlv.TlvConvertException;
 import com.cloudhopper.smpp.util.DeliveryReceipt;
 import com.cloudhopper.smpp.util.DeliveryReceiptException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ft.config.Constants;
 import com.ft.domain.Notification;
 import com.ft.service.EventService;
@@ -74,7 +71,7 @@ public class UssdClientMessagingService implements SmppClientMessageService {
 			if (messagePayload != null) {
 				shortMsg = messagePayload.getValueAsString();
 			} else {
-				shortMsg = CharsetUtil.decode(deliverSm.getShortMessage(), CharsetUtil.CHARSET_GSM);
+				shortMsg = CharsetUtil.decode(deliverSm.getShortMessage(), CharsetUtil.CHARSET_ISO_8859_1);
 			}
 			log.info("<<< === Got DeliverSM: {} -> {} | {}", sourceAddress, destAddress, shortMsg);
 		} catch (Exception e) {

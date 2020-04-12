@@ -81,7 +81,7 @@ public class SmscSmppConfiguration {
 		SmppSession session = activeSessions.get(event.getSessionId()).getSession();
 		if ((session != null) && session.isBound()) {
 			byte[][] segments = GsmUtil.createConcatenatedBinaryShortMessages(
-					CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_GSM), (byte) (random.nextInt() % 255));
+					CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_ISO_8859_1), (byte) (random.nextInt() % 255));
 			log.debug("Text message does NEED TO SPLIT");
 			if (segments != null) {
 				for (byte[] s : segments) {
@@ -113,7 +113,7 @@ public class SmscSmppConfiguration {
 				request.setServiceType("USSD");
 				request.setSourceAddress(new Address(event.getSourceTon(), event.getSourceNpi(), event.getSource()));
 				request.setDestAddress(new Address(event.getDestTon(), event.getDestNpi(), event.getDest()));
-				request.setShortMessage(CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_GSM));
+				request.setShortMessage(CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_ISO_8859_1));
 				
 				if (event.getUssdOp() != null) {
 					byte[] ussdOp = HexUtil.toByteArray(event.getUssdOp());

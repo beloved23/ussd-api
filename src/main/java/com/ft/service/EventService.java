@@ -2,6 +2,7 @@ package com.ft.service;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
@@ -13,8 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -73,13 +76,18 @@ public class EventService {
     	responseEvent.setDest(mo.getSource()); responseEvent.setDestTon(mo.getSourceTon()); responseEvent.setDestNpi(mo.getSourceNpi());
     	responseEvent.setSessionId(smscId);
     	responseEvent.setUssdOp(props.getMoEnd()); // default information
+    	params.putAll(props.getQueryParams());
     	params.put("msisdn", mo.getSource());
     	params.put("code", mo.getDest());
     	params.put("sessionid", mo.getSessionNumber() + "");
     	params.put("INPUT", mo.getText());
-    	params.putAll(props.getQueryParams());
+    	
     	try {
-    		ResponseEntity<String> response = restTemplate.getForEntity(props.getCallbackUrl(), String.class, params);
+    		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(props.getCallbackUrl());
+    		for (Entry<String, String> e : params.entrySet()) {
+    			builder.queryParam(e.getKey(), e.getValue());
+    		}
+    		ResponseEntity<String> response = restTemplate.getForEntity(builder.build().toString(), String.class);
 	    	responseEvent.setText(response.getBody());
 	    	if (response.getStatusCodeValue() == 200) {
 	    		responseEvent.setUssdOp(props.getMoContinue()); // CONTINUE
