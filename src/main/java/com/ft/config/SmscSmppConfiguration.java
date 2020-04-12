@@ -90,6 +90,7 @@ public class SmscSmppConfiguration {
 					request.setSourceAddress(new Address(event.getSourceTon(), event.getSourceNpi(), event.getSource()));
 					request.setDestAddress(new Address(event.getDestTon(), event.getDestNpi(), event.getDest()));
 					request.setEsmClass(SmppConstants.ESM_CLASS_UDHI_MASK);
+					request.setDataCoding(event.getDataCoding());
 					request.setShortMessage(s);
 					
 					if (event.getUssdOp() != null) {
@@ -111,6 +112,7 @@ public class SmscSmppConfiguration {
 				log.debug("Text message DOES NOT need to split");
 				SubmitSm request = new SubmitSm();
 				request.setServiceType("USSD");
+				request.setDataCoding(event.getDataCoding());
 				request.setSourceAddress(new Address(event.getSourceTon(), event.getSourceNpi(), event.getSource()));
 				request.setDestAddress(new Address(event.getDestTon(), event.getDestNpi(), event.getDest()));
 				request.setShortMessage(CharsetUtil.encode(event.getText(), CharsetUtil.CHARSET_ISO_8859_1));

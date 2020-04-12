@@ -16,6 +16,8 @@ public class EventDTO implements Serializable {
 
 	private String source;
 	
+	private byte dataCoding;
+	
 	private byte sourceTon;
 	
 	private byte sourceNpi;
@@ -174,6 +176,14 @@ public class EventDTO implements Serializable {
 
 	public void setError(boolean error) {
 		this.error = error;
+	}
+
+	public byte getDataCoding() {
+		return dataCoding;
+	}
+
+	public void setDataCoding(byte dataCoding) {
+		this.dataCoding = dataCoding;
 	}
 
 

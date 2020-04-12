@@ -129,6 +129,7 @@ public class UssdClientMessagingService implements SmppClientMessageService {
 		evt.setChannel(Constants.CHANNEL_SMS);
 		evt.setSource(sourceAddress); evt.setSourceTon(deliverSm.getSourceAddress().getTon()); evt.setSourceNpi(deliverSm.getSourceAddress().getNpi());
 		evt.setDest(destAddress); evt.setDestTon(deliverSm.getDestAddress().getTon()); evt.setDestNpi(deliverSm.getDestAddress().getNpi());
+		evt.setDataCoding(deliverSm.getDataCoding());
 		evt.setText(shortMsg);
 		
 		
